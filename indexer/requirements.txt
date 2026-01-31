@@ -1,0 +1,8 @@
+Required tools/ libraries in prod:
+
+insightface
+onnxruntime
+opencv-python
+numpy
+tqdm
+faiss-cpu
