@@ -29,8 +29,8 @@ def read_image_bgr(path: Path):
 
 def main():
     # ---- CONFIG (temporary, local testing) ----
-    PHOTOS_ROOT = Path("sample_photos")   # create this folder with ~10–20 images
-    OUT_DIR = Path("output/index")
+    PHOTOS_ROOT = Path(r"C:/Users/Public/Pictures/Reception_DT_Lagna/reception_photos")   # create this folder with ~10–20 images
+    OUT_DIR = Path("output/reception_index")
     DET_SIZE = (640, 640)
     # -------------------------------------------
 
@@ -40,10 +40,22 @@ def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     # Load a pretrained InsightFace model (ArcFace-based).
+        # IMPORTANT:
+    # - We are NOT training anything here.
+    # - This model outputs a 512-dim normalized embedding per detected face.
 
     print("Loading face model…")
     app = insightface.app.FaceAnalysis(name="buffalo_l")
     app.prepare(ctx_id=0, det_size=DET_SIZE)
+
+        # These two structures form the core of our index:
+    #
+    # embeddings:
+    #   A list of 512-dim float vectors (one per detected face).
+    #
+    # manifest:
+    #   A parallel list mapping embedding index -> photo metadata.
+    #   This lets us go from "face match" -> "original photo file".
 
     embeddings = [] #A list of 512-dim float vectors (one per detected face).
     manifest = [] #A parallel list mapping embedding index -> photo metadata.
@@ -57,6 +69,10 @@ def main():
             continue
 
         # Detect faces + compute embeddings.
+        # Each face object contains:
+        # - bounding box
+        # - landmarks
+        # - normed_embedding (512-d vector)
 
         faces = app.get(img)
         if not faces:
@@ -88,6 +104,13 @@ def main():
     dim = X.shape[1]
 
     print(f"Total faces indexed: {len(X)}")
+
+        # FAISS index for cosine similarity:
+    #
+    # - IndexFlatIP = Inner Product index
+    # - Because embeddings are normalized, inner product == cosine similarity
+    #
+    # This makes similarity search extremely fast at query time.
 
     index = faiss.IndexFlatIP(dim)
     index.add(X)

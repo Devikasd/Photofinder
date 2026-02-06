@@ -1,5 +1,4 @@
-Required tools/ libraries in prod:
-
+# ML / face recognition
 insightface
 onnxruntime
 opencv-python
