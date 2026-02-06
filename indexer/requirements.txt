@@ -1,0 +1,7 @@
+# ML / face recognition
+insightface
+onnxruntime
+opencv-python
+numpy
+tqdm
+faiss-cpu

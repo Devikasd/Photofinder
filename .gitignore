@@ -1,0 +1,14 @@
+# Python virtual env
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local outputs
+indexer/output/
+indexer/ref.jpg
+
+# OS junk
+.DS_Store
+Thumbs.db
